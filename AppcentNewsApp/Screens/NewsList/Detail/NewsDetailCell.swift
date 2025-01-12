@@ -5,6 +5,11 @@
 //  Created by Burak Gül on 10.01.2025.
 //
 
+
+//MARK: - Todo
+/*
+ configure
+ */
 import UIKit
 
 class NewsDetailCell: UITableViewCell {
@@ -87,10 +92,11 @@ class NewsDetailCell: UITableViewCell {
     }
 
     
-    func configure(title: String, description: String, image: UIImage?) {
-        self.titleLabel.text = title
-        self.descriptionLabel.text = description
-        self.image.image = image
+    func configureWith(_ news: News) {
+        //MARK: - TO DO
+        // gelen newsin özellikleri uı elementlerine setlencek
+        self.titleLabel.text = news.title // bunun gibi
+
     }
     
 

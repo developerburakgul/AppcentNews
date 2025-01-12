@@ -1,5 +1,5 @@
 //
-//  NewsViewController.swift
+//  FavoritesViewController.swift
 //  AppcentNewsApp
 //
 //  Created by Burak Gül on 10.01.2025.
@@ -8,26 +8,9 @@
 import Foundation
 import UIKit
 
-extension NewsViewController {
-    static func getMockData() -> [Model] {
-        var data: [Model] = []
-        for item in 0...100 {
-            let model = Model(
-                title: "\(item)",
-                description: "Descripiton \(item)"
-                
-            )
-            data.append(model)
-        }
-        
-        return data
-        
-    }
-}
 
-class NewsViewController: UIViewController {
-    
-    private var dataSource: [Model] = []
+class FavoritesViewController: UIViewController {
+    private var viewModel: FavoritesViewModelProtocol = FavoritesViewModel()
     //MARK: - UI ELEMENTS
     private var tableView: UITableView = {
         let tableView = UITableView()
@@ -38,7 +21,6 @@ class NewsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        dataSource = Self.getMockData()
         setup()
         setupNavigationBar()
         
@@ -68,42 +50,39 @@ class NewsViewController: UIViewController {
     
     private func setupNavigationBar() {
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.label]
-        title = "APPCENT NEWS"
+        title = "FAVORİTES"
         
     }
 }
 
 
 //MARK: -  UITableViewDataSource
-extension NewsViewController: UITableViewDataSource {
+extension FavoritesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        dataSource.count
+        viewModel.dataSourceCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        //MARK: - TODO
+        // convert to dequeReusableCell
         var cell = NewsDetailCell()
-        cell.configure(
-            title: "iCommunity is working UIKit",
-            description: "UIKit is good framework but SwiftUI is better.............. UIKit is good framework but SwiftUI is better..............",
-            image: UIImage(systemName: "heart")
-        )
-        
+        let news = viewModel.getData(at: indexPath)
+        cell.configureWith(news)
         return cell
     }
 }
 
-extension NewsViewController: UITableViewDelegate {
+extension FavoritesViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let model = dataSource[indexPath.row]
-        let detailViewController = DetailViewController(model: model)
+        let news = viewModel.getData(at: indexPath)
+        let detailViewController = DetailViewController(news: news)
         self.navigationController?.pushViewController(detailViewController, animated: false)
-        
     }
 }
 
 #Preview() {
-    NewsViewController()
+    FavoritesViewController()
 }
 #Preview("Main") {
     let newsViewController: UIViewController = NewsViewController()
