@@ -92,7 +92,7 @@ class NewsDetailCell: UITableViewCell {
     }
 
     
-    func configureWith(_ news: News) {
+    func configureWith(_ news: Article) {
         //MARK: - TO DO
         // gelen newsin özellikleri uı elementlerine setlencek
         self.titleLabel.text = news.title // bunun gibi

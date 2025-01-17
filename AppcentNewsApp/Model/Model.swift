@@ -7,20 +7,24 @@
 
 import Foundation
 
-struct Response: Codable {
+struct Response: Decodable {
     let status: String
     let totalResults: Int
-    let articles: [News]
+    let articles: [Article]
 }
 
-struct News: Codable {
+struct Article: Decodable {
     let source: Source
-    let author, title, description: String
-    let url, urlToImage: String
-    let publishedAt: Date
-    let content: String
+    let author: String?
+    let title: String
+    let description: String?
+    let url: String
+    let urlToImage: String?
+    let publishedAt: String
+    let content: String?
 }
 
-struct Source: Codable {
-    let id, name: String
+struct Source: Decodable {
+    let id: String?
+    let name: String
 }

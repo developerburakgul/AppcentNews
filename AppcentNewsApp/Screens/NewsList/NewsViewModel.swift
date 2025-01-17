@@ -14,11 +14,12 @@ import Foundation
 
 protocol NewsViewModelProtocol: AnyObject {
     var dataSourceCount: Int { get }
-    func getData(at indexPath: IndexPath) -> News
+    func getData(at indexPath: IndexPath) -> Article
 }
 
 class NewsViewModel: NewsViewModelProtocol {
-    var dataSource: [News] = []
+    let service = Service()
+    var dataSource: [Article] = []
     
     init() {
         
@@ -28,9 +29,14 @@ class NewsViewModel: NewsViewModelProtocol {
         dataSource.count
     }
     
-    func getData(at indexPath: IndexPath) -> News {
+    func getData(at indexPath: IndexPath) -> Article {
         dataSource[indexPath.row]
     }
     
+    func getNews() {
+        service.getNews(country: "us") { result in
+            print(result)
+        }
+    }
     
 }

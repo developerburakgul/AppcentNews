@@ -20,7 +20,7 @@ import UIKit
 
 class DetailViewController: UIViewController {
     
-    private var news: News
+    private var news: Article
 
     //MARK: - UI ELEMENTS
     
@@ -89,7 +89,7 @@ class DetailViewController: UIViewController {
     }
     
     //MARK: - Init Functions
-    init(news: News) {
+    init(news: Article) {
         self.news = news
         super.init(nibName: nil, bundle: nil)
     }

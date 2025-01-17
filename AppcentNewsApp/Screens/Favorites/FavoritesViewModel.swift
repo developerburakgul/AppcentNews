@@ -12,7 +12,7 @@ import Foundation
 
 protocol FavoritesViewModelProtocol: AnyObject {
     var dataSourceCount: Int { get }
-    func getData(at indexPath: IndexPath) -> News
+    func getData(at indexPath: IndexPath) -> Article
 }
 
 class FavoritesViewModel:  FavoritesViewModelProtocol {
@@ -22,15 +22,15 @@ class FavoritesViewModel:  FavoritesViewModelProtocol {
         10
     }
     
-    func getData(at indexPath: IndexPath) -> News {
-        News(
+    func getData(at indexPath: IndexPath) -> Article {
+        Article(
             source: Source(id: "1", name: "Burak"),
             author: "Batuhan",
             title: "Başlık",
             description: "Detay",
             url: "sdfsdf",
             urlToImage: "dsfsdf",
-            publishedAt: Date(),
+            publishedAt: "Date()",
             content: "sdfsdfsdfsdf"
         )
         
@@ -44,15 +44,15 @@ class Yigit: FavoritesViewModelProtocol {
         10
     }
     
-    func getData(at indexPath: IndexPath) -> News {
-        News(
+    func getData(at indexPath: IndexPath) -> Article {
+        Article(
             source: Source(id: "2", name: "Yiğit"),
             author: "xx",
             title: "Başlık",
             description: "Detay",
             url: "sdfsdf",
             urlToImage: "dsfsdf",
-            publishedAt: Date(),
+            publishedAt: "Date",
             content: "sdfsdfsdfsdf"
         )
     }

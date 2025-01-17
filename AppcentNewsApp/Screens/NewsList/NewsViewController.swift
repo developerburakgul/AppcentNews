@@ -33,6 +33,7 @@ final class NewsViewController: UIViewController {
         // Do any additional setup after loading the view.
         setup()
         setupNavigationBar()
+        viewModel.getNews()
     }
     
     //MARK: - UI SETUP FUNCTIONS
