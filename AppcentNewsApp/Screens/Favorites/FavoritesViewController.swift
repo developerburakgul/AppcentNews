@@ -23,21 +23,21 @@ class FavoritesViewController: UIViewController {
         // Do any additional setup after loading the view.
         setup()
         setupNavigationBar()
-        
+
     }
-    
+
     //MARK: - UI SETUP FUNCTIONS
     private func setup() {
         setupTableView()
-        
+
         tableView.dataSource = self
         tableView.delegate = self
     }
-    
+
     private func setupTableView() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate(
             [
                 tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -47,11 +47,11 @@ class FavoritesViewController: UIViewController {
             ]
         )
     }
-    
+
     private func setupNavigationBar() {
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.label]
         title = "FAVORİTES"
-        
+
     }
 }
 
@@ -61,7 +61,7 @@ extension FavoritesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.dataSourceCount
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //MARK: - TODO
         // convert to dequeReusableCell
@@ -73,10 +73,10 @@ extension FavoritesViewController: UITableViewDataSource {
 }
 
 extension FavoritesViewController: UITableViewDelegate {
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let news = viewModel.getData(at: indexPath)
-        let detailViewController = DetailViewController(news: news)
+        let article = viewModel.getData(at: indexPath)
+        let detailViewController = DetailViewController(article: article)
         self.navigationController?.pushViewController(detailViewController, animated: false)
     }
 }
@@ -87,7 +87,7 @@ extension FavoritesViewController: UITableViewDelegate {
 #Preview("Main") {
     let newsViewController: UIViewController = NewsViewController()
     let favoritesViewController: UIViewController = FavoritesViewController()
-    
+
     var navigationVC1 = UINavigationController(
         rootViewController: newsViewController
     )
@@ -97,7 +97,7 @@ extension FavoritesViewController: UITableViewDelegate {
         tag: 0
     )
 
-    
+
     var navigationVC2 = UINavigationController(
         rootViewController: favoritesViewController
     )

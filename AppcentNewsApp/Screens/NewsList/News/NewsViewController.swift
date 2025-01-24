@@ -11,16 +11,20 @@
  Viewmodel nasıl inject edilcek ???
  TableViewCEll i deque ya çevrilcek
  searchbar eklencek
- 
+
  */
 import Foundation
 import UIKit
 
+protocol NewsViewModelOutputProtocol: AnyObject {
+    var dataSourceCount: Int { get }
+    func getData(at indexPath: IndexPath) -> Article
+}
 
 final class NewsViewController: UIViewController {
-    
+
     private var viewModel: NewsViewModel = NewsViewModel()
-    
+
     //MARK: - UI ELEMENTS
     private var tableView: UITableView = {
         let tableView = UITableView()
@@ -33,20 +37,21 @@ final class NewsViewController: UIViewController {
         // Do any additional setup after loading the view.
         setup()
         setupNavigationBar()
+        viewModel.fetchNews(searchString: "apple")
     }
-    
+
     //MARK: - UI SETUP FUNCTIONS
     private func setup() {
         setupTableView()
-        
+
         tableView.dataSource = self
         tableView.delegate = self
     }
-    
+
     private func setupTableView() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate(
             [
                 tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -56,11 +61,11 @@ final class NewsViewController: UIViewController {
             ]
         )
     }
-    
+
     private func setupNavigationBar() {
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.label]
         title = "APPCENT NEWS"
-        
+
     }
 }
 
@@ -70,7 +75,7 @@ extension NewsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.dataSourceCount
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //MARK: - TODO
         // convert to dequeReusableCell
@@ -82,10 +87,10 @@ extension NewsViewController: UITableViewDataSource {
 }
 
 extension NewsViewController: UITableViewDelegate {
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let news = viewModel.getData(at: indexPath)
-        let detailViewController = DetailViewController(news: news)
+        let article = viewModel.getData(at: indexPath)
+        let detailViewController = DetailViewController(article: article)
         self.navigationController?.pushViewController(detailViewController, animated: false)
     }
 }
@@ -96,7 +101,7 @@ extension NewsViewController: UITableViewDelegate {
 #Preview("Main") {
     let newsViewController: UIViewController = NewsViewController()
     let favoritesViewController: UIViewController = FavoritesViewController()
-    
+
     var navigationVC1 = UINavigationController(
         rootViewController: newsViewController
     )
@@ -106,7 +111,7 @@ extension NewsViewController: UITableViewDelegate {
         tag: 0
     )
 
-    
+
     var navigationVC2 = UINavigationController(
         rootViewController: favoritesViewController
     )
