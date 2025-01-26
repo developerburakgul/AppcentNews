@@ -10,10 +10,7 @@ import Foundation
 // MARK: - NewsServiceProtocol
 
 protocol NewsServiceProtocol {
-    func fetchNews(
-        searchString: String,
-        completion: @escaping (Result<[Article], NetworkError>) -> Void
-    )
+    func fetchNews(searchString: String) async throws -> [Article]
 }
 
 final class NewsService {
@@ -27,12 +24,13 @@ final class NewsService {
 // MARK: - NetworkManagerProtocol
 
 extension NewsService: NewsServiceProtocol {
-    func fetchNews(searchString: String, completion: @escaping (Result<[Article], NetworkError>) -> Void) {
-        api.executeRequestFor(
+    func fetchNews(searchString: String) async throws -> [Article] {
+        // We expect a Response that contains `[Article]` inside
+        let response: Response = try await api.executeRequestFor(
             router: .news(query: searchString),
-            method: .get,
-            completion: completion
+            method: .get
         )
+        return response.articles
     }
 }
 

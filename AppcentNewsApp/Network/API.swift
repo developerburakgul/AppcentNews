@@ -79,16 +79,18 @@ extension API {
         return request
     }
 
-    func executeRequestFor<T: Decodable>(router: Router, headers: [String: String]? = nil, method: RequestMethod = .get, completion: @escaping (Result<T, NetworkError>) -> Void) {
-
+    func executeRequestFor<T: Decodable>(
+        router: Router,
+        headers: [String: String]? = nil,
+        method: RequestMethod = .get
+    ) async throws -> T {
+        // Build the URLRequest
         guard let urlRequest = prepareURLRequestFor(router: router, headers: headers, method: method) else {
-            completion(.failure(.invalidRequest))
-            return
+            throw NetworkError.invalidRequest
         }
 
-        service.execute(urlRequest: urlRequest) { (result: Result<T, NetworkError>) in
-            completion(result)
-        }
-
+        // Use the async function from your NetworkManager
+        let decoded: T = try await service.execute(urlRequest: urlRequest)
+        return decoded
     }
 }

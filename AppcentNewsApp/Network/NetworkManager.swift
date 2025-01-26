@@ -7,34 +7,8 @@
 
 import Foundation
 
-enum NetworkError: Error {
-    case invalidRequest
-    case requestFailed
-    case decodingError
-    case noData
-    case customError(Error)
-
-    var localizedDescription: String {
-        switch self {
-        case .invalidRequest:
-            return "Invalid Request"
-        case .requestFailed:
-            return "Request Failed"
-        case .decodingError:
-            return "Decoding Error"
-        case .customError(let error):
-            return error.localizedDescription
-        case .noData:
-            return "No data received"
-        }
-    }
-}
-
 protocol NetworkManagerProtocol {
-    func execute<T: Decodable>(
-        urlRequest: URLRequest,
-        completion: @escaping (Result<T, NetworkError>) -> Void
-    )
+    func execute<T: Decodable>(urlRequest: URLRequest) async throws -> T
 }
 
 final class NetworkManager {
@@ -50,28 +24,13 @@ final class NetworkManager {
 // MARK: - NetworkManagerProtocol
 
 extension NetworkManager: NetworkManagerProtocol {
+    func execute<T: Decodable>(urlRequest: URLRequest) async throws -> T {
+        do {
+            let (data, response) = try await session.data(for: urlRequest)
 
-    /// ##Usage
-    /// - Parameters:
-    ///   - urlRequest: Requesti buraya verelim
-    ///   - completion: Completion bloğu
-    func execute<T>(urlRequest: URLRequest, completion: @escaping (Result<T, NetworkError>) -> Void) where T : Decodable {
-        let task = session.dataTask(with: urlRequest) { data, response, error in
-            if let error = error {
-                print("Network error: \(error.localizedDescription)")
-                completion(.failure(.customError(error)))
-                return
-            }
-
-            if let httpResponse = response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
-                completion(.failure(.requestFailed))
-                return
-            }
-
-            guard let data = data else {
-                print("No data received")
-                completion(.failure(.noData))
-                return
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200...299).contains(httpResponse.statusCode) else {
+                throw NetworkError.requestFailed
             }
 
             if let jsonString = String(data: data, encoding: .utf8) {
@@ -79,13 +38,15 @@ extension NetworkManager: NetworkManagerProtocol {
             }
 
             do {
-                let decodedResponse = try JSONDecoder().decode(T.self, from: data)
-                completion(.success(decodedResponse))
+                let decoded = try JSONDecoder().decode(T.self, from: data)
+                return decoded
             } catch {
                 print("Decoding error: \(error)")
-                completion(.failure(.decodingError))
+                throw NetworkError.decodingError
             }
+        } catch {
+            // If the request itself fails (e.g., no internet)
+            throw NetworkError.customError(error)
         }
-        task.resume()
     }
 }

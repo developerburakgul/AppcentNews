@@ -13,13 +13,13 @@
 import Foundation
 
 protocol NewsViewModelInputProtocol: AnyObject {
-    func fetchNews(searchString: String)
+    func fetchNews(searchString: String) async
 }
 
-class NewsViewModel: NewsViewModelOutputProtocol {
+
+final class NewsViewModel: NewsViewModelOutputProtocol {
 
     // MARK: Properties
-
     var dataSource: [Article] = []
     private let service: NewsServiceProtocol
 
@@ -34,18 +34,18 @@ class NewsViewModel: NewsViewModelOutputProtocol {
     func getData(at indexPath: IndexPath) -> Article {
         dataSource[indexPath.row]
     }
-
 }
 
 extension NewsViewModel: NewsViewModelInputProtocol {
+
     func fetchNews(searchString: String) {
-        service.fetchNews(searchString: searchString) { [weak self] result in
-            guard self != nil else { return }
-            switch result {
-            case .success(let newsResponse):
-                dump(newsResponse)
-            case .failure(let error):
-                print(NetworkError.customError(error))
+        Task {
+            do {
+                let articles = try await service.fetchNews(searchString: searchString)
+                dataSource = articles
+                dump(dataSource)
+            } catch {
+                print("Error fetching news: \(error.localizedDescription)")
             }
         }
     }
