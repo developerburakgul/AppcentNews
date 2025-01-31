@@ -10,20 +10,20 @@
  Author ve Date kısımları yapılcak
  bu sayfaya geldiğimizde eğer favorilerde varsa kalbin dolu olmasını eğer değilse boş olmasını bekleriz.
  paylaşma butonu yapılcak
- 
- kalpe tıklayınca favorilere ekleme user defaults model nasıl kaydedilir ? ViewModel ? 
- 
+
+ kalpe tıklayınca favorilere ekleme user defaults model nasıl kaydedilir ? ViewModel ?
+
  */
 
 import SnapKit
 import UIKit
 
 class DetailViewController: UIViewController {
-    
-    private var news: News
+
+    private var article: Article
 
     //MARK: - UI ELEMENTS
-    
+
     private let newsSourceButton: UIButton = {
         let button = UIButton()
         button.setTitleColor(.systemBlue, for: .normal)
@@ -32,26 +32,26 @@ class DetailViewController: UIViewController {
         button.backgroundColor = .red
         return button
     }()
-    
+
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .blue
         scrollView.isScrollEnabled = true
         return scrollView
     }()
-    
+
     private let contentView: UIView = {
         let view = UIView()
         view.backgroundColor = .systemGray
         return view
     }()
-    
+
     private let imageView: UIImageView = {
         let view = UIImageView()
         view.backgroundColor = .red
         return view
     }()
-    
+
     private var verticalStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
@@ -59,7 +59,7 @@ class DetailViewController: UIViewController {
         stack.backgroundColor = .green
         return stack
     }()
-    
+
     private let titleLabel : UILabel = {
         let label = UILabel()
         label.backgroundColor = .brown
@@ -74,33 +74,33 @@ class DetailViewController: UIViewController {
         label.numberOfLines = 0
         return label
     }()
-    
-    
-    
+
+
+
     //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBar()
     }
-    
+
     //MARK: - Init Functions
-    init(news: News) {
-        self.news = news
+    init(article: Article) {
+        self.article = article
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 
-    
-    
+
+
+
     //MARK: - Setup Functions
     private func setup() {
         setupNewsSourceButton()
@@ -112,7 +112,7 @@ class DetailViewController: UIViewController {
         setupNavigationBar()
         addTargetNewsSourceButton()
     }
-    
+
     private func setupNewsSourceButton() {
         view.addSubview(newsSourceButton)
         newsSourceButton.snp.makeConstraints { make in
@@ -122,7 +122,7 @@ class DetailViewController: UIViewController {
             make.height.equalToSuperview().multipliedBy(0.05)
         }
     }
-    
+
     private func setupContentView() {
         view.addSubview(contentView)
         contentView.snp.makeConstraints { make in
@@ -131,7 +131,7 @@ class DetailViewController: UIViewController {
             make.bottom.equalTo(newsSourceButton.snp.top).offset(-16)
         }
     }
-    
+
     private func setupScrollView() {
         contentView.addSubview(scrollView)
         scrollView.snp.makeConstraints { make in
@@ -141,7 +141,7 @@ class DetailViewController: UIViewController {
             make.top.equalToSuperview().offset(16)
         }
     }
-    
+
     private func setupImageView() {
         scrollView.addSubview(imageView)
         imageView.snp.makeConstraints { make in
@@ -151,27 +151,27 @@ class DetailViewController: UIViewController {
             make.height.equalTo(imageView.snp.width).multipliedBy(0.5)
         }
     }
-    
+
     private func setupStackView() {
-        
+
         scrollView.addSubview(verticalStackView)
         verticalStackView.snp.makeConstraints { make in
             make.leading.equalTo(imageView.snp.leading)
             make.trailing.equalTo(imageView.snp.trailing)
             make.top.equalTo(imageView.snp.bottom).offset(16)
             make.bottom.equalToSuperview()
-            
+
         }
 
-        
-        
+
+
     }
-    
+
     private func setupLabels() {
         verticalStackView.addArrangedSubview(titleLabel)
         verticalStackView.addArrangedSubview(descriptionLabel)
     }
-    
+
     private func setupNavigationBar() {
         let heart = UIBarButtonItem(
             image: UIImage(systemName: "heart"),
@@ -179,17 +179,17 @@ class DetailViewController: UIViewController {
             target: self,
             action: #selector(tappedHeart)
         )
-        
+
         let share =  UIBarButtonItem(
             image: UIImage(systemName: "square.and.arrow.up"),
             style: .done,
             target: self,
             action: #selector(tappedShare)
         )
-        
+
         navigationItem.rightBarButtonItems = [heart, share]
     }
-    
+
     private func addTargetNewsSourceButton() {
         newsSourceButton.addTarget(
             self,
@@ -199,19 +199,19 @@ class DetailViewController: UIViewController {
     }
     @objc
     private func tappedHeart() {
-        
+
     }
     @objc
     private func tappedShare() {
-        
+
     }
-    
+
     @objc
     private func tappedNewsSourceButton() {
-        
+
         let webViewController = WebViewController(urlString: "https://www.icommunity.com.tr")
         navigationController?.pushViewController(webViewController, animated: true)
-        
+
     }
 
 }
