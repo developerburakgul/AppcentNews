@@ -16,14 +16,19 @@
 import Foundation
 import UIKit
 
-protocol NewsViewModelOutputProtocol: AnyObject {
-    var dataSourceCount: Int { get }
-    func getData(at indexPath: IndexPath) -> Article
+//protocol NewsViewModelOutputProtocol: AnyObject {
+//    var dataSourceCount: Int { get }
+//    func getData(at indexPath: IndexPath) -> Article
+//    func reloadData()
+//}
+
+protocol NewsViewControllerProtocol: AnyObject {
+    func reloadData()
 }
 
 final class NewsViewController: UIViewController {
 
-    private var viewModel: NewsViewModel = NewsViewModel()
+    private var viewModel: NewsViewModelProtocol = NewsViewModel()
 
     //MARK: - UI ELEMENTS
     private var tableView: UITableView = {
@@ -37,7 +42,8 @@ final class NewsViewController: UIViewController {
         // Do any additional setup after loading the view.
         setup()
         setupNavigationBar()
-        viewModel.fetchNews(searchString: "apple")
+        viewModel.fetchNews(searchString: "besiktas")
+        viewModel.view = self
     }
 
     //MARK: - UI SETUP FUNCTIONS
@@ -79,7 +85,7 @@ extension NewsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //MARK: - TODO
         // convert to dequeReusableCell
-        var cell = NewsDetailCell()
+        let cell = NewsDetailCell()
         let news = viewModel.getData(at: indexPath)
         cell.configureWith(news)
         return cell
@@ -92,6 +98,29 @@ extension NewsViewController: UITableViewDelegate {
         let article = viewModel.getData(at: indexPath)
         let detailViewController = DetailViewController(article: article)
         self.navigationController?.pushViewController(detailViewController, animated: false)
+    }
+}
+
+extension NewsViewController: NewsViewControllerProtocol {
+    
+    func reloadData() {
+        DispatchQueue.main.async { [weak self] in
+            self?.tableView.reloadData()
+        }
+    }
+}
+
+extension NewsViewController: UIScrollViewDelegate {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let endScrolling = (scrollView.contentOffset.y + scrollView.frame.size.height)
+        print(scrollView.contentOffset.y)
+        print(scrollView.frame.size.height)
+        print(scrollView.contentSize.height)
+        
+        
+        if endScrolling >= scrollView.contentSize.height {
+            viewModel.loadData()
+        }
     }
 }
 

@@ -17,6 +17,7 @@
 
 import SnapKit
 import UIKit
+import Kingfisher
 
 class DetailViewController: UIViewController {
 
@@ -35,14 +36,14 @@ class DetailViewController: UIViewController {
 
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.backgroundColor = .blue
+//        scrollView.backgroundColor = .blue
         scrollView.isScrollEnabled = true
         return scrollView
     }()
 
     private let contentView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGray
+//        view.backgroundColor = .systemGray
         return view
     }()
 
@@ -56,21 +57,21 @@ class DetailViewController: UIViewController {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = 16
-        stack.backgroundColor = .green
+//        stack.backgroundColor = .green
         return stack
     }()
 
     private let titleLabel : UILabel = {
         let label = UILabel()
-        label.backgroundColor = .brown
-        label.text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release o"
+//        label.backgroundColor = .brown
+//        label.text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release o"
         label.numberOfLines = 0
         return label
     }()
     private let descriptionLabel : UILabel = {
         let label = UILabel()
-        label.backgroundColor = .yellow
-        label.text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release o Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release oLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release o"
+//        label.backgroundColor = .yellow
+//        label.text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release o Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release oLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release o"
         label.numberOfLines = 0
         return label
     }()
@@ -92,10 +93,34 @@ class DetailViewController: UIViewController {
     init(article: Article) {
         self.article = article
         super.init(nibName: nil, bundle: nil)
+        setAttributes(article)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setAttributes(_ article: Article)  {
+        self.article = article
+        self.titleLabel.text = article.title
+        self.descriptionLabel.text = article.description
+        if let urlToImage = article.urlToImage {
+            let url = URL(string: urlToImage)
+            let processor = DownsamplingImageProcessor(size: self.imageView.bounds.size)
+                         |> RoundCornerImageProcessor(cornerRadius: 20)
+            self.imageView.kf.indicatorType = .activity
+            self.imageView.kf.setImage(
+                with: url,
+                placeholder: UIImage(systemName: "photo"),
+                options: [
+                    .processor(processor),
+                    .scaleFactor(UIScreen.main.scale),
+                    .transition(.fade(1)),
+                    .cacheOriginalImage
+                ])
+        } else {
+            self.imageView.image = UIImage(systemName: "photo")
+        }
     }
 
 

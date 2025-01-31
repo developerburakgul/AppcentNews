@@ -13,7 +13,7 @@ enum RequestMethod: String {
 }
 
 enum Router {
-    case news(query: String)
+    case news(query: String, page: Int = 1, pageSize: Int = 100)
 
     var path: String {
         switch self {
@@ -24,10 +24,13 @@ enum Router {
 
     var queryItems: [URLQueryItem] {
         switch self {
-        case .news(let query):
+        case .news(let query, let page, let pageSize):
             return [
                 URLQueryItem(name: "q", value: query),
+                URLQueryItem(name: "page", value: "\(page)"),
+                URLQueryItem(name: "pageSize", value: "\(pageSize)"),
                 URLQueryItem(name: "apiKey", value: API.shared.apiKey)
+                
             ]
         }
     }
@@ -63,12 +66,13 @@ extension API {
     ) -> URLRequest?  {
 
         let urlString = baseURL + router.path
+        print(urlString)
         guard var urlComponents = URLComponents(string: urlString) else { return nil }
 
         urlComponents.queryItems = router.queryItems
 
         guard let url = urlComponents.url else { return nil }
-
+print(url)
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
 
@@ -79,16 +83,23 @@ extension API {
         return request
     }
 
-    func executeRequestFor<T: Decodable>(router: Router, headers: [String: String]? = nil, method: RequestMethod = .get, completion: @escaping (Result<T, NetworkError>) -> Void) {
+    func executeRequestFor<T: Codable>(_ T: T.Type, router: Router, headers: [String: String]? = nil, method: RequestMethod = .get, completion: @escaping (Result<T, NetworkError>) -> Void) {
 
         guard let urlRequest = prepareURLRequestFor(router: router, headers: headers, method: method) else {
             completion(.failure(.invalidRequest))
             return
         }
 
-        service.execute(urlRequest: urlRequest) { (result: Result<T, NetworkError>) in
+        service.execute(T, urlRequest: urlRequest) { (result: Result<T, NetworkError>) in
             completion(result)
         }
+        
+//
+//        service.execute(
+//            T.Type,
+//            urlRequest: urlRequest) { result: Result<T.Type, NetworkError> in
+//                completion(result)
+//            }
 
     }
 }

@@ -31,7 +31,8 @@ enum NetworkError: Error {
 }
 
 protocol NetworkManagerProtocol {
-    func execute<T: Decodable>(
+    func execute<T: Codable>(
+        _ T: T.Type,
         urlRequest: URLRequest,
         completion: @escaping (Result<T, NetworkError>) -> Void
     )
@@ -50,12 +51,12 @@ final class NetworkManager {
 // MARK: - NetworkManagerProtocol
 
 extension NetworkManager: NetworkManagerProtocol {
-
+    
     /// ##Usage
     /// - Parameters:
     ///   - urlRequest: Requesti buraya verelim
     ///   - completion: Completion bloğu
-    func execute<T>(urlRequest: URLRequest, completion: @escaping (Result<T, NetworkError>) -> Void) where T : Decodable {
+    func execute<T: Codable>(_ T: T.Type, urlRequest: URLRequest, completion: @escaping (Result<T, NetworkError>) -> Void) {
         let task = session.dataTask(with: urlRequest) { data, response, error in
             if let error = error {
                 print("Network error: \(error.localizedDescription)")
@@ -75,7 +76,7 @@ extension NetworkManager: NetworkManagerProtocol {
             }
 
             if let jsonString = String(data: data, encoding: .utf8) {
-                print("Raw JSON Response: \(jsonString)")
+//                print("Raw JSON Response: \(jsonString)")
             }
 
             do {
@@ -87,5 +88,7 @@ extension NetworkManager: NetworkManagerProtocol {
             }
         }
         task.resume()
+    
+    
     }
 }

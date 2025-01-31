@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct Response: Decodable {
+struct AppcentResponse: Codable {
     let status: String
     let totalResults: Int
     let articles: [Article]
 }
 
-struct Article: Decodable {
+struct Article: Codable {
     let source: Source?
     let author, title, description: String?
     let url, urlToImage: String?
@@ -21,6 +21,6 @@ struct Article: Decodable {
     let content: String?
 }
 
-struct Source: Decodable {
+struct Source: Codable {
     let id, name: String?
 }

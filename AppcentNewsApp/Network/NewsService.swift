@@ -12,7 +12,9 @@ import Foundation
 protocol NewsServiceProtocol {
     func fetchNews(
         searchString: String,
-        completion: @escaping (Result<[Article], NetworkError>) -> Void
+        page: Int,
+        pageSize: Int,
+        completion: @escaping (Result<AppcentResponse, NetworkError>) -> Void
     )
 }
 
@@ -27,9 +29,15 @@ final class NewsService {
 // MARK: - NetworkManagerProtocol
 
 extension NewsService: NewsServiceProtocol {
-    func fetchNews(searchString: String, completion: @escaping (Result<[Article], NetworkError>) -> Void) {
+    func fetchNews(
+        searchString: String,
+        page: Int = 1,
+        pageSize: Int = 100,
+        completion: @escaping (Result<AppcentResponse, NetworkError>) -> Void
+    ) {
         api.executeRequestFor(
-            router: .news(query: searchString),
+            AppcentResponse.self,
+            router: .news(query: searchString, page: page, pageSize: pageSize),
             method: .get,
             completion: completion
         )

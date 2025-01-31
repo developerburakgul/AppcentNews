@@ -12,21 +12,45 @@
  */
 import Foundation
 
-protocol NewsViewModelInputProtocol: AnyObject {
+//protocol NewsViewModelInputProtocol: AnyObject {
+//    func fetchNews(searchString: String)
+//}
+
+protocol NewsViewModelProtocol: AnyObject {
+    var view: NewsViewControllerProtocol? { get set }
+    var searchText: String? { get set }
+    var dataSourceCount: Int { get }
+    func getData(at indexPath: IndexPath) -> Article
     func fetchNews(searchString: String)
+    func loadData()
 }
 
-class NewsViewModel: NewsViewModelOutputProtocol {
-
+class NewsViewModel {
+    
     // MARK: Properties
-
+    weak var view: NewsViewControllerProtocol?
     var dataSource: [Article] = []
+    var searchText: String?
     private let service: NewsServiceProtocol
 
     init(service: NewsServiceProtocol = NewsService()) {
         self.service = service
     }
+    
+    private var page: Int = 1
+    private var pageSize: Int = 5
+    
+        
+}
 
+
+extension NewsViewModel: NewsViewModelProtocol {
+    
+    
+
+    
+    
+    
     var dataSourceCount: Int {
         dataSource.count
     }
@@ -34,19 +58,35 @@ class NewsViewModel: NewsViewModelOutputProtocol {
     func getData(at indexPath: IndexPath) -> Article {
         dataSource[indexPath.row]
     }
-
-}
-
-extension NewsViewModel: NewsViewModelInputProtocol {
+    
     func fetchNews(searchString: String) {
-        service.fetchNews(searchString: searchString) { [weak self] result in
-            guard self != nil else { return }
+        searchText = searchString
+        service.fetchNews(
+            searchString: searchString,
+            page: page,
+            pageSize: pageSize
+        ) { [weak self] result in
+            guard let self else {return}
             switch result {
-            case .success(let newsResponse):
-                dump(newsResponse)
+            case .success(let AppcentResponse):
+                let data =  AppcentResponse.articles
+                self.dataSource += data
+                self.view?.reloadData()
             case .failure(let error):
                 print(NetworkError.customError(error))
             }
         }
+        
+        print(self.dataSourceCount)
     }
+    
+    func loadData() {
+        guard let searchText else {return}
+        page += 1
+        fetchNews(searchString: searchText)
+        
+    }
+
+
 }
+

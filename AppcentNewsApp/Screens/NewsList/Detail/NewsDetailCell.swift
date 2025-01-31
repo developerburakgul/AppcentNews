@@ -11,6 +11,7 @@
  configure
  */
 import UIKit
+import Kingfisher
 
 class NewsDetailCell: UITableViewCell {
 
@@ -21,7 +22,7 @@ class NewsDetailCell: UITableViewCell {
         label.font = .systemFont(ofSize: 16, weight: .bold)
         label.textColor = UIColor.label
         label.numberOfLines = 1
-        label.backgroundColor = .red
+//        label.backgroundColor = .red
         return label
     }()
 
@@ -29,7 +30,7 @@ class NewsDetailCell: UITableViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         label.textColor = UIColor.secondaryLabel
-        label.backgroundColor = .yellow
+//        label.backgroundColor = .yellow
         label.numberOfLines = 2
         return label
     }()
@@ -38,7 +39,7 @@ class NewsDetailCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
 //        image.backgroundColor = .green
-        imageView.backgroundColor = UIColor.green
+//        imageView.backgroundColor = UIColor.green
 
         return imageView
     }()
@@ -55,7 +56,7 @@ class NewsDetailCell: UITableViewCell {
     }
 
     private func setupUI() {
-        contentView.backgroundColor = .systemGray
+//        contentView.backgroundColor = .systemGray
         contentView.addSubview(image)
         image.translatesAutoresizingMaskIntoConstraints = false
 
@@ -96,6 +97,25 @@ class NewsDetailCell: UITableViewCell {
         //MARK: - TO DO
         // gelen newsin özellikleri uı elementlerine setlencek
         self.titleLabel.text = news.title // bunun gibi
+        self.descriptionLabel.text = news.description
+        if let urlToImage = news.urlToImage {
+            let url = URL(string: urlToImage)
+            let processor = DownsamplingImageProcessor(size: self.image.bounds.size)
+                         |> RoundCornerImageProcessor(cornerRadius: 20)
+            self.image.kf.indicatorType = .activity
+            self.image.kf.setImage(
+                with: url,
+                placeholder: UIImage(systemName: "photo"),
+                options: [
+                    .processor(processor),
+                    .scaleFactor(UIScreen.main.scale),
+                    .transition(.fade(1)),
+                    .cacheOriginalImage
+                ])
+        } else {
+            self.image.image = UIImage(systemName: "photo")
+        }
+        
 
     }
 
